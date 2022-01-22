@@ -33,10 +33,16 @@ class Document():
         return self.__tokens.count(token)
 
     def get_num_words(self):
+        """
+        Returns number of words in document
+        """
         return len(self.__tokens)
 
-    def __tf(self):
+    def tf(self):
+        """
+        Returns a dict containing term frequency normalized by total number of words in document
+        """
         word_dict = {}
         for token in set(self.__tokens):
-            word_dict[token] = self.__word_count(token)/len(self.__tokens)
+            word_dict[token] = self.__word_count(token)/self.num_words
         return word_dict
