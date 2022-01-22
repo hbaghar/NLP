@@ -7,7 +7,7 @@ class Document():
     def __init__(self, filepath):
         self.__filepath = filepath
         self.sentiment = filepath[:filepath.rfind('/')][-3:]
-        self.__tokens = self.__process_file()
+        self.tokens = self.__process_file()
         self.num_words = self.get_num_words()
 
     def __str__(self):
@@ -30,19 +30,19 @@ class Document():
         """
         Counts occurences of a specific word
         """
-        return self.__tokens.count(token)
+        return self.tokens.count(token)
 
     def get_num_words(self):
         """
         Returns number of words in document
         """
-        return len(self.__tokens)
+        return len(self.tokens)
 
     def tf(self):
         """
         Returns a dict containing term frequency normalized by total number of words in document
         """
         word_dict = {}
-        for token in set(self.__tokens):
+        for token in set(self.tokens):
             word_dict[token] = self.__word_count(token)/self.num_words
         return word_dict
