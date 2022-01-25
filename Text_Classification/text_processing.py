@@ -19,12 +19,15 @@ class Document():
         Perform text processing on a raw txt file given its filepath
         Returns a list of tokenized words after removing special characters
         """
-        text = ''
-        with open(self.__filepath) as f:
-            text = f.readlines()
-        text = ' '.join(text)
-        text = re.sub('[^a-zA-Z\d\s]+', "", text)
-        return [token for token in text.split(' ') if token != '']
+        try:
+            text = ''
+            with open(self.__filepath) as f:
+                text = f.readlines()
+            text = ' '.join(text)
+            text = re.sub('[^a-zA-Z\d\s]+', "", text)
+            return [token for token in text.split(' ') if token != '']
+        except:
+            print('Excpetion occured in file:' + self.__filepath)
 
     def __word_count(self, token):
         """
