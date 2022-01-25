@@ -24,7 +24,7 @@ class Document():
             with open(self.__filepath) as f:
                 text = f.readlines()
             text = ' '.join(text)
-            text = re.sub('\-+', ' ', text)
+            text = re.sub('[\-\n]+', ' ', text)
             text = re.sub('[^a-zA-Z\d\s]+', '', text)
             return [token for token in text.split(' ') if token != '']
         except:
