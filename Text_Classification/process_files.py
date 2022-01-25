@@ -10,11 +10,19 @@ def get_filepaths(root):
     return [file for dir in os.walk(root) for file in glob(os.path.join(dir[0], '*.txt'))]
 
 #Convert to input later
-path = 'Text_Classification/review_polarity'
+def main():
+    path = 'Text_Classification/review_polarity'
 
-#We need to process all files and create a vocabulary
-dir = os.path.join(os.curdir, path)
-for file in tqdm(get_filepaths(dir)):
-    pass
+    #We need to process all files and create a vocabulary
+    dir = os.path.join(os.curdir, path)
+    vocab = set()
+    for file in tqdm(get_filepaths(dir), desc = "Processing files"):
+        doc = Document(file)
+        vocab.update(set(doc.tokens))
 
-sentiment_map = {'pos':1, 'neg':-1}
+    with open('Text_Classification/vocabulary.txt', 'w+') as f:
+        for word in tqdm(vocab, desc = "Creating vocabulary"):
+            f.write(word+"\n")
+
+if __name__ == "__main__":
+    main()
