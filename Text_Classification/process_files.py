@@ -34,17 +34,25 @@ class ProcessDocuments(object):
             for token in doc.tf().keys():
                 self.__word_doc_freq[token] = self.__word_doc_freq.get(token, 0) + 1
 
+        #Creating lookup table using dictionary for faster search for idx in get_dataset
         self.vocab = {token: i for token,i in zip(self.__word_doc_freq.keys(), range(len(self.__word_doc_freq)))}
 
     def get_dataset(self):
+        """
+        Creates dataset in the form of a numpy array. Features are tf-idf scores and last column is sentiment label
+        """
         self.__get_documents()
         self.__get_vocab()
-
+        #Define matrix size based on document and feature counts
         self.data = np.zeros((len(self.__documents), len(self.__word_doc_freq)+1))
-        for i,doc in enumerate(tqdm(self.__documents, desc = "Craeating dataset")):
+        #Iterating every document
+        for i,doc in enumerate(tqdm(self.__documents, desc = "Creating dataset")):
+            #Iterating every word in document
             for token, val in doc.tf().items():
                 idx = self.vocab[token]
+                #Calculating tf-idf score
                 self.data[i,idx] = val*np.log(len(self.__documents)/(self.__word_doc_freq[token]+1))
+                #Assigning labels
                 self.data[i,-1] = 1 if doc.sentiment == "pos" else -1
 
 def main():
