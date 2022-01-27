@@ -72,6 +72,8 @@ class ProcessDocuments(object):
         print("\nCreating training dataset...")
         self.train_data = self.__get_data_matrix(self.__train_documents)
 
+        return self.train_data
+
     def get_test_data(self):
         print("\nProcessing test data files...")
         self.__test_documents = self.__get_documents(self.test_path)
@@ -79,16 +81,4 @@ class ProcessDocuments(object):
         print("\nCreating test dataset...")
         self.test_data = self.__get_data_matrix(self.__test_documents)
 
-def main():
-    processor = ProcessDocuments()
-    processor.get_train_data()
-    processor.get_test_data()
-
-    train_X, train_y = processor.train_data
-    print(train_X.shape, train_y.shape)
-
-    test_X, test_y = processor.test_data
-    print(test_X.shape, test_y.shape)
-
-if __name__ == "__main__":
-    main()
+        return self.test_data
