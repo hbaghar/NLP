@@ -6,58 +6,89 @@ import numpy as np
 
 class ProcessDocuments(object):
     """docstring for ProcessDocuments."""
-
-    def __init__(self, root='Text_Classification/review_polarity'):
-        self.__root = root
-        self.__documents = []
+    #Remove root and pass location as parameter for each funtion
+    def __init__(self, train_path = 'Text_Classification/data/train', test_path = 'Text_Classification/data/test'):
+        self.train_path = train_path
+        self.test_path = test_path
+        self.__train_documents = []
+        self.__test_documents = []
         self.__word_doc_freq = {}
         self.vocab = None
-        self.data = None
+        self.train_data = None
+        self.test_data = None
 
-    def __get_filepaths(self):
+    def __get_filepaths(self, path):
         """
         Return file path for all txt files listed in a directory and sub-directories
         """
-        return [file for dir in os.walk(self.__root) for file in glob(os.path.join(dir[0], '*.txt'))]
-
-    def __get_documents(self):
+        return [file for dir in os.walk(path) for file in glob(os.path.join(dir[0], '*.txt'))]
+    #Return  value and call separately for train and test data
+    def __get_documents(self, path):
         """
         Create a list of document objects for each text file
         """
-        self.__documents = [Document(file) for file in tqdm(self.__get_filepaths(), desc = "Processing documents")]
+        return [Document(file) for file in tqdm(self.__get_filepaths(path), desc = "Processing documents")]
 
+    #Call when training data is being created
     def __get_vocab(self):
         """
         Function that will gather all the words from each document and build a bag of words
         """
-        for doc in tqdm(self.__documents, desc = "Generating vocabulary"):
+        for doc in tqdm(self.__train_documents, desc = "Generating vocabulary"):
             for token in doc.tf().keys():
                 self.__word_doc_freq[token] = self.__word_doc_freq.get(token, 0) + 1
 
         #Creating lookup table using dictionary for faster search for idx in get_dataset
         self.vocab = {token: i for token,i in zip(self.__word_doc_freq.keys(), range(len(self.__word_doc_freq)))}
 
-    def get_dataset(self):
+    def __get_data_matrix(self, docs):
         """
         Creates dataset in the form of a numpy array. Features are tf-idf scores and last column is sentiment label
         """
-        self.__get_documents()
-        self.__get_vocab()
         #Define matrix size based on document and feature counts
-        self.data = np.zeros((len(self.__documents), len(self.__word_doc_freq)+1))
+        x = np.zeros((len(docs), len(self.__word_doc_freq)))
+        y = np.zeros((len(docs), 1))
+        #Split into function and allow passing custom list of document objects (so that it can be re-run for train and test)
         #Iterating every document
-        for i,doc in enumerate(tqdm(self.__documents, desc = "Creating dataset")):
+        for i,doc in enumerate(tqdm(docs, desc = "Creating dataset")):
             #Iterating every word in document
             for token, val in doc.tf().items():
-                idx = self.vocab[token]
-                #Calculating tf-idf score
-                self.data[i,idx] = val*np.log(len(self.__documents)/(self.__word_doc_freq[token]+1))
+                try:
+                    idx = self.vocab[token]
+                    #Calculating tf-idf score
+                    x[i,idx] = val*np.log(len(docs)/(self.__word_doc_freq[token]+1))
+                except:
+                    pass
                 #Assigning labels
-                self.data[i,-1] = 1 if doc.sentiment == "pos" else -1
+                y[i] = 1 if doc.sentiment == "pos" else -1
+
+        return x,y
+
+    def get_train_data(self):
+        print("Processing training data files...")
+        self.__train_documents = self.__get_documents(self.train_path)
+        self.__get_vocab()
+
+        print("\nCreating training dataset...")
+        self.train_data = self.__get_data_matrix(self.__train_documents)
+
+    def get_test_data(self):
+        print("\nProcessing test data files...")
+        self.__test_documents = self.__get_documents(self.test_path)
+
+        print("\nCreating test dataset...")
+        self.test_data = self.__get_data_matrix(self.__test_documents)
 
 def main():
     processor = ProcessDocuments()
-    processor.get_dataset()
+    processor.get_train_data()
+    processor.get_test_data()
+
+    train_X, train_y = processor.train_data
+    print(train_X.shape, train_y.shape)
+
+    test_X, test_y = processor.test_data
+    print(test_X.shape, test_y.shape)
 
 if __name__ == "__main__":
     main()
