@@ -27,8 +27,9 @@ class Document():
             text = re.sub('[\-\n]+', ' ', text)
             text = re.sub('[^a-zA-Z\d\s]+', '', text)
             return [token for token in text.split(' ') if token != '']
-        except:
+        except Exception as e:
             print('Excpetion occured in file:' + self.__filepath)
+            print(e)
 
     def __word_count(self, token):
         """
