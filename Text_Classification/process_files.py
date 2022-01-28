@@ -56,7 +56,7 @@ class ProcessFiles(object):
         """
         #Define matrix size based on document and feature counts
         x = np.zeros((len(files), len(self.__word_doc_freq)))
-        y = np.zeros((len(files), 1))
+        y = np.zeros((len(files), ))
         #Iterating over every document
         for i, file in enumerate(tqdm(files, desc = "Creating dataset")):
             #Iterating every word in document
@@ -65,11 +65,11 @@ class ProcessFiles(object):
                 try:
                     idx = self.vocab[token]
                     #Calculating tf-idf score
-                    x[i,idx] = val*np.log(len(files)/(self.__word_doc_freq[token]+1))
+                    x[i,idx] = val#*np.log(len(files)/(self.__word_doc_freq[token]+1))
                 except:
                     pass
                 #Assigning labels
-                y[i] = 1 if doc.sentiment == "pos" else -1
+                y[i] = 1 if doc.sentiment == "pos" else 0
 
         return x,y
 
