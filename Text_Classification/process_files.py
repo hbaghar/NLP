@@ -21,7 +21,8 @@ class ProcessFiles(object):
     |_ process_files.py
     |_ text_processing.py
     """
-
+# TODO: Add bias term in dataset
+# TODO: Limit vocabulary to top n features
     def __init__(self, train_path = 'Text_Classification/data/train', test_path = 'Text_Classification/data/test'):
         self.train_path = train_path
         self.test_path = test_path

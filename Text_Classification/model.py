@@ -5,6 +5,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix
 
+# TODO: Cleanup of code, remove loss function warnings
 class MyLogisticRegresiion(object):
     """docstring for MyLogisticRegresiion."""
 

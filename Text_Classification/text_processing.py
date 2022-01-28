@@ -1,6 +1,8 @@
 import os
 import re
 
+## TODO: remove stopwords
+
 class Document():
     """Contains word frequencies for an individual text document"""
 
