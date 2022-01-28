@@ -49,5 +49,5 @@ class Document():
         """
         word_dict = {}
         for token in set(self.tokens):
-            word_dict[token] = self.__word_count(token)/self.num_words
+            word_dict[token] = self.__word_count(token)#/self.num_words
         return word_dict
